@@ -7,6 +7,7 @@ As requested, I've finished and submitted the web application. Documentation, Te
 The application provides the following features:
 - Create Ticket Page: Includes a form with all the fields mendatory in order to submit the ticket. 
 - View Tickets: Shows all the tickets saved in the database. Includes a filter at the top with all the requested filters.
+- Chart Page: Generates a bar chart based on the amount of tickets each project has.
 
 
 ## Tech Stack
@@ -15,7 +16,7 @@ The application provides the following features:
 
 **Database:** EntityFramework 7.0
 
-**Programming languages / libraries:** C#, Javascript, JQuery, Bootstrap, Chart.js
+**Programming languages / libraries:** C#, Javascript, JQuery, Ajax, Bootstrap, Chart.js, HTML, CSS
 
 
 ## Installation
