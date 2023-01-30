@@ -1,0 +1,70 @@
+﻿@model Bell_Canada_Test.Models.Ticket;
+
+@{
+    ViewData["Title"] = "Ticket";
+}
+
+<!--Ticket creation form-->
+<h2>Create Ticket</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="CreateTicket">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="ProjectName" class="control-label">Project Name</label>
+                <input asp-for="ProjectName" class="form-control" required/>
+                <span asp-validation-for="ProjectName" class="text-danger"></span>
+            </div><br />
+            <div class="form-group">
+                <label asp-for="DepartmentName" class="control-label">Select Department</label>
+                <select asp-for="DepartmentName" class="form-control form-select" asp-items="@ViewBag.dep_names" id="dep" required><option value="">--Select Department--</option></select>
+                <span asp-validation-for="DepartmentName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RequestedBy" class="control-label">Requested By</label>
+                <select asp-for="RequestedBy" class="form-control" id="reqby" required></select>
+                <span asp-validation-for="RequestedBy" class="text-danger"></span>
+            </div><br />
+            <div class="form-group">
+                <label asp-for="Description" class="control-label">Description of Problem</label>
+                <textarea asp-for="Description" class="form-control" required></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <input type="hidden" asp-for="DateReceived" value="@Model.DateReceived"/>
+            <br />
+            <div class="form-group">
+                <input type="submit" value="Submit" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<!--Update Requested by dropdown when department gets selected-->
+<script type="text/javascript">
+    $('#reqby').attr('disabled', true);
+    $("#dep").change(function (){
+        var department = $('#dep');
+        //Make a get request to retrieve employees based on the selected department
+        $.ajax({
+            type: "GET",
+            url: "ITSUpport/GetEmployees",
+            data: {
+                department: department.val()
+            },
+            success: function(data) {
+                var result ="";
+                $.each(data, function(id, employee) {
+                    result += '<option value="' + employee + '">' + employee + '</option>';
+                });
+                $('#reqby').attr('disabled', false);
+                $("#reqby").html('<option value="">--Select Employee--</option>'+result);
+            },
+            error: function(xhr){
+                alert("request failed");
+            }
+        });
+    });
+</script>
