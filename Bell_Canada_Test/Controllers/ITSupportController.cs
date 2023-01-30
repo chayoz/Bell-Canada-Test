@@ -3,9 +3,11 @@ using Bell_Canada_Test.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Net.NetworkInformation;
 
 namespace Bell_Canada_Test.Controllers
 {
@@ -51,6 +53,31 @@ namespace Bell_Canada_Test.Controllers
                 dep_employee.Add(employee.EmployeeName);
             }
             return dep_employee.ToArray();
+        }
+
+        [HttpGet]
+        public async Task<string> GetTicketStats()
+        {
+            //Retrieve all tickets from the database and make a list of the distinct project names
+            List<Ticket> tickets = await _context.Tickets.Distinct().ToListAsync();
+            List<string> projects = tickets.Select(x => x.ProjectName).Distinct().ToList();
+            List<Stats> stats = new List<Stats>();
+
+            //Go through the distinct project names and count the amount of tickets for each.
+            foreach (string project in projects)
+            {
+                Stats stat = new Stats();
+                stat.project = project;
+                stat.total = tickets.Where(x => x.ProjectName == project).Count();
+                stats.Add(stat);
+            }
+
+            return JsonSerializer.Serialize(stats);
+        }
+
+        public IActionResult Chart()
+        {
+            return View();
         }
 
         public async Task<IActionResult> ViewTickets(string searchType = "", string filter = "", DateTime filter2 = new DateTime())
@@ -112,5 +139,11 @@ namespace Bell_Canada_Test.Controllers
             }
             return RedirectToAction("Index");
         }
+    }
+
+    public class Stats
+    {
+        public string? project { get; set; }
+        public int total { get; set; }
     }
 }

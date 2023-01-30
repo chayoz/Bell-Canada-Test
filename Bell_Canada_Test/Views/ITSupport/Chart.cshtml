@@ -1,0 +1,54 @@
+﻿@{
+    ViewData["Title"] = "Chart";
+}
+
+<center><canvas id="barChart" style="width:100%;max-width:80%"></canvas></center>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        //Make a GET request to the GetTicketStats API from ITSupport Controller
+        $.ajax({
+            type: "GET",
+            url: "@Url.Action("GetTicketStats")",
+            success: function (data) {
+                //parse json string to json object
+                var stats = JSON.parse(data);
+                var xValues = [];
+                var yValues = [];
+
+                //Split data values for the chart.
+                for (let i = 0; i < stats.length; i++){
+                    xValues[i] = stats[i].project;
+                    yValues[i] = stats[i].total;
+                }
+                
+                const ctx = document.getElementById('barChart');
+
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: xValues,
+                        datasets: [{
+                            label: 'Tickets count based on projects',
+                            data: yValues,
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+
+            },
+            error: function (xhr) {
+                alert("request failed");
+            }
+        });
+    });
+</script>

@@ -15,7 +15,7 @@ The application provides the following features:
 
 **Database:** EntityFramework 7.0
 
-**Programming languages / libraries:** C#, Javascript, JQuery, Bootstrap
+**Programming languages / libraries:** C#, Javascript, JQuery, Bootstrap, Chart.js
 
 
 ## Installation
@@ -130,9 +130,10 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 ```
 
-To organize our ticket pages and API's we have the ITSupportController. It provides 2 pages:
+To organize our ticket pages and API's we have the ITSupportController. It provides 3 pages:
 - The index page which is where the employee can fill the ticket form.
 - The ViewTickets page which is where all the saved tickets in the database can be viewed.
+- The chart page where a bar chart is generated based on the amount of tickets for each project.
 
 In order to update the RequestedBy drop down list, we've created an API which can be called through */ITSupport/GetEmployees*, it takes a string parameters which is the department selected and returns an array of the department's employees.
 
@@ -167,6 +168,24 @@ To detect this change we are using a JQuery function called *.change* which dete
 
 Once the form is filled and submitted, we make a POST request at the *ITSupport/CreateTicket* API which takes a *Ticket* object as a parameters and saves it in the database.
 
-Finally ViewTickets function takes optional parameters, which are the filters chosen, and based on them returns a list of the found results.
+The ViewTickets function takes optional parameters, which are the filters chosen, and based on them returns a list of the found results.
 
+Finally we have the *GetTicketStats* function which is called from the *Chart.cshtml* View with a GET request, and it returns in the form of a Json string all the unique project names along with their ticket count. The data is then parsed from a Json string to an object as we can see on the code below:
 
+```
+//parse json string to json object
+var stats = JSON.parse(data);
+```
+ And as a final step we used the Chart.js library to generate a bar chart based on our data.
+## Screenshots
+**Create Ticket Page:**
+
+![Create Ticket](https://cdn.discordapp.com/attachments/922559663352979496/1069672219485159425/image.png)
+##
+**View Tickets Page:**
+
+![View Tickets](https://cdn.discordapp.com/attachments/922559663352979496/1069672312833593454/image.png)
+##
+**Chart Page:**
+
+![Chart](https://cdn.discordapp.com/attachments/922559663352979496/1069672369431523339/image.png)
